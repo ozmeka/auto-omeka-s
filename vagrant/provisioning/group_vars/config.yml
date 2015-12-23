@@ -1,0 +1,13 @@
+---
+hostname: ozmeka.localdomain
+omeka_version: 0.4.0-alpha
+
+db_host: localhost
+db_port: 3306
+db_user: omeka
+db_password: Ne47Ew2jgVenrUV
+db_name: omeka_db
+db_prefix: omeka_
+
+
+

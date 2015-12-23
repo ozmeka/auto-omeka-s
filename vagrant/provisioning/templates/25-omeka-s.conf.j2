@@ -1,0 +1,25 @@
+# ************************************
+# Vhost template
+# Managed by Ansible
+# ************************************
+
+<VirtualHost *:80>
+  ServerName {{ hostname }}
+	
+  ## Vhost docroot
+  DocumentRoot "/var/www/html/omeka-s-{{ omeka_version }}"
+
+  ## Directories, there should at least be a declaration for /var/www/html/omeka-s-{{ omeka_version }}
+
+  <Directory "/var/www/html/omeka-s-{{ omeka_version }}">
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+		Require all granted
+  </Directory>
+
+  ## Logging
+  ErrorLog "/var/log/httpd/omeka_error.log"
+  ServerSignature Off
+  CustomLog "/var/log/httpd/omeka_access.log" combined
+</VirtualHost>
