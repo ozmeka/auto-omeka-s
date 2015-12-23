@@ -1,4 +1,4 @@
-## AUTO-OZMEKA
+## AUTO-OMEKA-S
 
 A collection of scripts which use a base Centos 7 "box" file for Vagrant, 
 then provision this image into an Omeka-S installation using Vagrant and Ansible.
