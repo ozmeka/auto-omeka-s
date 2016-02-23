@@ -1,0 +1,181 @@
+---
+
+#############################################################################
+##
+##  Auto-Omeka-S
+##  T McIntyre for UTS EResearch 2015-16
+##
+#############################################################################
+
+#############################################################################
+##
+##  ANSIBLE TASKS for omeka-s role
+##
+#############################################################################
+
+#############################################################################
+##
+##  Prep and dependencies
+##
+#############################################################################
+
+  - hostname: name={{ hostname }}
+
+  - name: update base OS packages
+    yum: >
+      name=*
+      state=latest
+
+  - name: Add EPEL repository
+    yumrepo: >
+      name=epel
+      description='EPEL YUM repo'
+      baseurl=http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+  - name: Add webtatic repository so we can have PHP 5.5
+    yum: >
+      name=https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+      state=present
+
+  - name: install useful tools
+    yum: >
+      name={{ item }}
+      state=latest
+    with_items:
+      - wget
+      - telnet
+      - lynx
+      - mlocate
+      - lsof
+      - git
+      - ant
+
+  - name: install apache
+    yum: >
+      pkg=httpd
+      state=latest
+
+  - lineinfile: >
+      dest=/etc/httpd/conf/httpd.conf
+      line="NameVirtualHost *:80"
+      regexp="NameVirtualHost"
+      state=present
+    notify: restart apache
+
+  - name: install apache vhost config for omeka-s
+    template: >
+      dest=/etc/httpd/conf.d/25-omeka-s.conf
+      src=templates/25-omeka-s.conf.j2
+      owner=root
+      group=wheel
+      mode=0644
+    notify: restart apache
+
+  - name: install php & ancillaries
+    yum: >
+      name={{ item }}
+      state=latest
+    with_items:
+      - php55w
+      - php55w-mysqlnd
+      - php55w-mbstring
+      - php55w-xml
+    notify: restart apache
+
+  - name: enable and start apache
+    service: >
+      name=httpd
+      state=started
+      enabled=yes
+
+  - name: install mariadb
+    yum:
+      name={{ item }}
+      state=latest
+    with_items:
+      - mariadb-server
+      - MySQL-python  # bindings for ansible modules to use
+
+  - name: enable and start mariadb
+    service: >
+      name=mariadb
+      state=started
+      enabled=yes
+
+#   Enable this stanza if you'd like to install your own db config
+#    - name: install mariadb config
+#      template: >
+#        src=templates/my.cnf.j2
+#        dest=/etc/my.cnf
+#        owner=root
+#        group=wheel
+#        mode=0644
+#      notify:
+#        - restart mariadb-server
+
+  - name: ImageMagick
+    yum: >
+      pkg=ImageMagick
+      state=latest
+
+  #- name: java
+  #  yum: pkg=java-{{ openjdk_version }}-openjdk state=latest
+
+
+#############################################################################
+##
+##  Omeka core
+##
+#############################################################################
+
+
+  - name: check if omeka core is present already
+    stat: path=/var/www/html/omeka-{{ omeka_version }}/index.php
+    register: omekacoreexists
+
+#   - debug: var=omekacoreexists.stat.exists
+
+  - name: fetch omeka core
+    get_url: url=https://github.com/omeka/omeka-s/archive/v{{ omeka_version }}.tar.gz dest=/tmp/omeka-s-{{ omeka_version }}.tar.gz
+    register: omekacorearchivefetched
+    when: not omekacoreexists.stat.exists
+
+  - name: extract omeka core
+    unarchive: src=/tmp/omeka-s-{{ omeka_version }}.tar.gz dest=/var/www/html/ creates=/var/www/html/omeka-s-{{ omeka_version }}/index.php copy=no
+    register: omekacoreextracted
+    when: omekacorearchivefetched|success
+
+  - name: install omeka's db config file
+    template: >
+      dest=/var/www/html/omeka-s-{{ omeka_version }}/config/database.ini
+      src=templates/database.ini.j2
+      owner=root
+      group=wheel
+      mode=0644
+
+  - name: set files dir owner as apache to allow uploads
+    command: /bin/chown -R apache:apache /var/www/html/omeka-s-{{ omeka_version }}/files/
+
+  #- name: enable display of PHP and application errors
+  #  lineinfile: dest=/var/www/html/omeka-{{ omeka_version }}/.htaccess regexp='SetEnv\sAPPLICATION_ENV' line='SetEnv APPLICATION_ENV development' state=present
+  #  when: omekacoreextracted|success
+
+  - name: create us a database
+    mysql_db: >
+      name={{ db_name }}
+      state=present
+
+  - name: create us a db user
+    mysql_user: >
+      name={{ db_user }}
+      password={{ db_password }}
+      priv={{ db_name }}.*:ALL
+      state=present
+
+  - name: initialise omeka-s install (could take an hour or so)
+    shell: ant init
+    args:
+      chdir: /var/www/html/omeka-s-{{ omeka_version }}/
+      creates: build/composer.phar
+
+## SOLR and plugins would be configured here if applicable

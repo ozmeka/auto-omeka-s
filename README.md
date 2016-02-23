@@ -1,7 +1,20 @@
+type: Development
+
+traffic-light: green
+
+target-close-date: 
+
+actual-close-date: 
+
+affected-group: FEIT
+
+deliverables: Scripts to provision a preview of Omeka-S
+
+
 ## AUTO-OMEKA-S
 
-A collection of scripts which use a base Centos 7 "box" file for Vagrant, 
-then provision this image into an Omeka-S installation using Vagrant and Ansible.
+A collection of scripts which generate a base Centos 7 "box" file for Vagrant, 
+then provision this image into an Omeka installation using Vagrant and Ansible.
 
 
 ### Who is this for?
@@ -10,7 +23,9 @@ People and organisations who want to make a rich collection of linked data
 accessible via the world-wide web.  Particularly those who would like to have
 canonical URIs for item data such as places, subjects and so on.
 
-NB:  Omeka-S is currently in alpha and is not suitable for production use.  Consider it as a preview and development release.
+NB:  This is a preview (alpha) release and is not considered suitable for
+production use.  Please report Omeka bugs (there will be bugs!) at 
+https://github.com/omeka/omeka-s
 
 
 ### Prerequisites:  
@@ -46,11 +61,11 @@ $ ```sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments pip install ansi
 Vagrant requires the vagrant-vbguest plugin; it will install this by itself.
 
 
-### Now clone the Ozmeka scripts:
+### Now clone the Omeka scripts:
 
-$ ```git clone https://github.com/ozmeka/auto-omeka-s.git```
+$ ```git clone https://codeine.research.uts.edu.au/eresearch/auto-omeka-s.git```
 
-$ ```cd auto-ozmeka/vagrant```
+$ ```cd auto-omeka-s/vagrant```
 
 You can review configuration options and alter them if necessary in the 
 provisioning/group_vars/config.yml file.
@@ -61,17 +76,14 @@ provisioning/group_vars/config.yml file.
 $ ```vagrant up```
 
 This will start the provisioner, which will automatically download a Centos 7 
-base box for Vagrant.  After that, it will install Ozmeka automatically, which 
-typically takes 5-10 minutes.
+base box for Vagrant.  After that, it will install Omeka S automatically, which 
+can take some time in the last step of initialising the web app.
 
 Once the provisioning script has completed, point your browser 
-at http://localhost:8080/install/install.php and set up Omeka.  Don't forget to 
-enable the plugins and theme in the admin section once you've finished initial 
-setup.
+at http://localhost:8080/ and set up Omeka.
 
 To shut down the VM when you're finished, use $ ```vagrant halt```.  You can 
 also use $ ```vagrant suspend``` to pause it.  If you made an awful mess of it 
 and want to start again from scratch, $ ```vagrant destroy``` will give you a 
 blank slate.  To bring the VM back up in all these cases, simply issue 
 $ ```vagrant up```.
-

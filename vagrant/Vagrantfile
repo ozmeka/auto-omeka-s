@@ -1,13 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-#############################################################################
-##
-##  Auto-Omeka-S
-##  T McIntyre for UTS eResearch 2015
-##
-#############################################################################
-
 # automatically install necessary plugin
 required_plugins = %w( vagrant-vbguest )
 required_plugins.each do |plugin|
@@ -61,16 +54,16 @@ Vagrant.configure(2) do |config|
 #  config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
 #    vb.gui = true
-   
+
     # Customize the amount of memory on the VM:
 #    vb.memory = "1024"
 #  end
-  
+
 	config.vm.provider "virtualbox" do |v|
 		host = RbConfig::CONFIG['host_os']
-		
+
 		v.gui = true
-	
+
 		# Give VM 1/4 system memory & access to half of the cpu cores on the host
 		if host =~ /darwin/
 			cpus = `sysctl -n hw.ncpu`.to_i / 2
@@ -84,15 +77,15 @@ Vagrant.configure(2) do |config|
 			cpus = 2
 			mem = 1024
 		end
-	
+
 		if cpus < 1
 			cpus = 1
 		end
-		
+
 		v.customize ["modifyvm", :id, "--memory", mem]
 		v.customize ["modifyvm", :id, "--cpus", cpus]
 	end
-  
+
   # View the documentation for the provider you are using for more
   # information on available options.
 
@@ -114,6 +107,7 @@ Vagrant.configure(2) do |config|
 #  config.vm.provision "shell", inline: "yum install bzip2"
 
   config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "vvvv"
     ansible.playbook = "provisioning/omeka-s.yml"
   end
 end

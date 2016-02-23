@@ -1,0 +1,19 @@
+---
+
+############################################################################
+#
+#  ANSIBLE HANDLERS
+#
+############################################################################
+
+  - name: restart httpd
+    service: >
+      name=httpd
+      state=restarted
+      enabled=yes
+
+  - name: restart mariadb
+    service: >
+      name=mariadb-server
+      state=restarted
+      enabled=yes
