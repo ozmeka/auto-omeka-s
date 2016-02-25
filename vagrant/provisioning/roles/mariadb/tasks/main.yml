@@ -1,0 +1,51 @@
+---
+
+#############################################################################
+##
+##  Auto-Omeka-S
+##  T McIntyre for UTS EResearch 2015-16
+##
+#############################################################################
+
+#############################################################################
+##
+##  ANSIBLE TASKS for mariadb
+##
+#############################################################################
+
+  - name: install mariadb
+    yum:
+      name={{ item }}
+      state=latest
+    with_items:
+      - mariadb-server
+      - MySQL-python  # bindings for ansible modules to use
+
+  - name: enable and start mariadb
+    service: >
+      name=mariadb
+      state=started
+      enabled=yes
+
+#   Enable this stanza if you'd like to install your own db config
+#    - name: install mariadb config
+#      template: >
+#        src=templates/my.cnf.j2
+#        dest=/etc/my.cnf
+#        owner=root
+#        group=root
+#        mode=0644
+#      notify:
+#        - restart mariadb
+
+  - name: create us a database
+    mysql_db: >
+      name={{ db_name }}
+      state=present
+
+  - name: create us a db user
+    mysql_user: >
+      name={{ db_user }}
+      password={{ db_password }}
+      priv={{ db_name }}.*:ALL
+      state=present

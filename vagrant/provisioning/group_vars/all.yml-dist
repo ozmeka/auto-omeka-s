@@ -5,7 +5,7 @@ hostname: omeka-s.localdomain
 db_host: localhost
 db_port: 3306
 db_user: omeka
-db_password: your_db_password
+db_password: Ne47Ew2jgVenrUV
 db_name: omeka_s_db
 db_prefix: omeka_s_
 

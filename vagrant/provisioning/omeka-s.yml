@@ -12,4 +12,7 @@
   user: vagrant
   become: yes
   roles:
+    - prep
+    - apache
+    - mariadb
     - omeka-s

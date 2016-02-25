@@ -1,0 +1,56 @@
+---
+
+#############################################################################
+##
+##  Auto-Omeka-S
+##  T McIntyre for UTS EResearch 2015-16
+##
+#############################################################################
+
+#############################################################################
+##
+##  ANSIBLE TASKS for omeka-s role
+##
+#############################################################################
+
+#############################################################################
+##
+##  Prep and dependencies
+##
+#############################################################################
+
+  - hostname: name={{ hostname }}
+
+  - name: update base OS packages
+    yum: >
+      name=*
+      state=latest
+
+  - name: Add EPEL repository
+    yumrepo: >
+      name=epel
+      description='EPEL YUM repo'
+      baseurl=http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+  - name: Add webtatic repository so we can have PHP 5.5
+    yum: >
+      name=https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+      state=present
+
+  - name: install useful tools
+    yum: >
+      name={{ item }}
+      state=latest
+    with_items:
+      - wget
+      - telnet
+      - lynx
+      - mlocate
+      - lsof
+      - git
+      - ant
+
+  - name: ImageMagick
+    yum: >
+      pkg=ImageMagick
+      state=latest

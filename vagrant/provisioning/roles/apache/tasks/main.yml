@@ -1,0 +1,52 @@
+---
+
+#############################################################################
+##
+##  Auto-Omeka-S
+##  T McIntyre for UTS EResearch 2015-16
+##
+#############################################################################
+
+#############################################################################
+##
+##  ANSIBLE TASKS for apache
+##
+#############################################################################
+
+  - name: install apache
+    yum: >
+      pkg=httpd
+      state=latest
+
+  - lineinfile: >
+      dest=/etc/httpd/conf/httpd.conf
+      line="NameVirtualHost *:80"
+      regexp="NameVirtualHost"
+      state=present
+    notify: restart apache
+
+  - name: install apache vhost config for omeka-s
+    template: >
+      dest=/etc/httpd/conf.d/25-omeka-s.conf
+      src=templates/25-omeka-s.conf.j2
+      owner=root
+      group=wheel
+      mode=0644
+    notify: restart apache
+
+  - name: install php & ancillaries
+    yum: >
+      name={{ item }}
+      state=latest
+    with_items:
+      - php55w
+      - php55w-mysqlnd
+      - php55w-mbstring
+      - php55w-xml
+    notify: restart apache
+
+  - name: enable and start apache
+    service: >
+      name=httpd
+      state=started
+      enabled=yes
