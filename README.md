@@ -67,8 +67,10 @@ $ ```git clone https://codeine.research.uts.edu.au/eresearch/auto-omeka-s.git```
 
 $ ```cd auto-omeka-s/vagrant```
 
+$ ```cp provisioning/group_vars/all.yml-dist provisioning/group_vars/all.yml```
+
 You can review configuration options and alter them if necessary in the 
-provisioning/group_vars/config.yml file.
+provisioning/group_vars/all.yml file.
 
 
 ### Launch the VM
