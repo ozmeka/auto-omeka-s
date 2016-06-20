@@ -63,7 +63,7 @@ Vagrant requires the vagrant-vbguest plugin; it will install this by itself.
 
 ### Now clone the Omeka scripts:
 
-$ ```git clone https://codeine.research.uts.edu.au/eresearch/auto-omeka-s.git```
+$ ```git clone https://github.com/ozmeka/auto-omeka-s.git```
 
 $ ```cd auto-omeka-s/vagrant```
 
