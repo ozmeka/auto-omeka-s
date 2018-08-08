@@ -7,11 +7,10 @@
   ServerName {{ hostname }}
 
   ## Vhost docroot
-  DocumentRoot "/var/www/html/omeka-s-{{ omeka_version }}"
+  DocumentRoot "/var/www/html/omeka-s"
 
-  ## Directories, there should at least be a declaration for /var/www/html/omeka-s-{{ omeka_version }}
-
-  <Directory "/var/www/html/omeka-s-{{ omeka_version }}">
+  ## Directories, there should at least be a declaration for /var/www/html/omeka-s
+  <Directory "/var/www/html/omeka-s">
     AllowOverride All
     Order allow,deny
     Allow from all

@@ -39,10 +39,10 @@
       name={{ item }}
       state=latest
     with_items:
-      - php55w
-      - php55w-mysqlnd
-      - php55w-mbstring
-      - php55w-xml
+      - php56w
+      - php56w-mysqlnd
+      - php56w-mbstring
+      - php56w-xml
     notify: restart apache
 
   - name: enable and start apache

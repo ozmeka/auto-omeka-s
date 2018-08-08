@@ -107,7 +107,7 @@ Vagrant.configure(2) do |config|
 #  config.vm.provision "shell", inline: "yum install bzip2"
 
   config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "vvvv"
+    ansible.verbose = "v"
     ansible.playbook = "provisioning/omeka-s.yml"
   end
 end

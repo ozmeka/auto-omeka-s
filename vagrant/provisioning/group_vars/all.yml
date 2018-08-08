@@ -9,4 +9,4 @@ db_password: your_db_password
 db_name: omeka_s_db
 db_prefix: omeka_s_
 
-omeka_version: 0.4.0-alpha
+omeka_version: 1.2.0

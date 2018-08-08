@@ -17,28 +17,33 @@
     stat: path=/var/www/html/omeka-{{ omeka_version }}/index.php
     register: omekacoreexists
 
-#   - debug: var=omekacoreexists.stat.exists
+  - debug: var=omekacoreexists.stat.exists
+
+  - debug:
+      msg:  "https://github.com/omeka/omeka-s/releases/download/v{{ omeka_version }}/omeka-s-{{ omeka_version }}.zip"
 
   - name: fetch omeka core
-    get_url: url=https://github.com/omeka/omeka-s/archive/v{{ omeka_version }}.tar.gz dest=/tmp/omeka-s-{{ omeka_version }}.tar.gz
+    get_url:
+      url:  https://github.com/omeka/omeka-s/releases/download/v{{ omeka_version }}/omeka-s-{{ omeka_version }}.zip
+      dest: /tmp/omeka-s-{{ omeka_version }}.zip
     register: omekacorearchivefetched
     when: not omekacoreexists.stat.exists
 
   - name: extract omeka core
-    unarchive: src=/tmp/omeka-s-{{ omeka_version }}.tar.gz dest=/var/www/html/ creates=/var/www/html/omeka-s-{{ omeka_version }}/index.php copy=no
+    unarchive: src=/tmp/omeka-s-{{ omeka_version }}.zip dest=/var/www/html/ creates=/var/www/html/omeka-s/index.php copy=no
     register: omekacoreextracted
     when: omekacorearchivefetched|success
 
   - name: install omeka's db config file
     template: >
-      dest=/var/www/html/omeka-s-{{ omeka_version }}/config/database.ini
+      dest=/var/www/html/omeka-s/config/database.ini
       src=templates/database.ini.j2
       owner=root
       group=wheel
       mode=0644
 
   - name: set files dir owner as apache to allow uploads
-    command: /bin/chown -R apache:apache /var/www/html/omeka-s-{{ omeka_version }}/files/
+    command: /bin/chown -R apache:apache /var/www/html/omeka-s/files/
 
   #- name: enable display of PHP and application errors
   #  lineinfile: dest=/var/www/html/omeka-{{ omeka_version }}/.htaccess regexp='SetEnv\sAPPLICATION_ENV' line='SetEnv APPLICATION_ENV development' state=present
@@ -56,10 +61,10 @@
       priv={{ db_name }}.*:ALL
       state=present
 
-  - name: initialise omeka-s install (could take an hour or so)
-    shell: ant init
-    args:
-      chdir: /var/www/html/omeka-s-{{ omeka_version }}/
-      creates: build/composer.phar
+#  - name: initialise omeka-s install (could take an hour or so)
+#    shell: ant init
+#    args:
+#      chdir: /var/www/html/omeka-s/
+#      creates: build/composer.phar
 
 ## SOLR and plugins would be configured here if applicable

@@ -6,8 +6,8 @@
 #
 ############################################################################
 
-  - name: restart httpd
+  - name: restart apache
     service: >
-      name=httpd
+      name=apache
       state=restarted
       enabled=yes
