@@ -54,3 +54,17 @@
     yum: >
       pkg=ImageMagick
       state=latest
+
+
+  - name: install GNOME Desktop group
+    become: yes
+    become_user: root
+    become_method: sudo
+     
+    yum:
+      name: "@^GNOME Desktop"
+      state: present
+    register: debug
+
+#  - name: Start Gnome
+#    service: name=gdm state=started

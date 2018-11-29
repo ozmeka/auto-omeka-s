@@ -24,6 +24,8 @@
       regexp="NameVirtualHost"
       state=present
     notify: restart apache
+  
+  
 
   - name: install apache vhost config for omeka-s
     template: >

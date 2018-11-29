@@ -60,11 +60,17 @@
       password={{ db_password }}
       priv={{ db_name }}.*:ALL
       state=present
+  - name: change post max
+    lineinfile: >
+      dest=/etc/php.ini
+      regexp='^post_max_size'
+      line='post_max_size = 10000000M'
 
-#  - name: initialise omeka-s install (could take an hour or so)
-#    shell: ant init
-#    args:
-#      chdir: /var/www/html/omeka-s/
-#      creates: build/composer.phar
+  - name: change filesize max
+    lineinfile: >
+      dest=/etc/php.ini
+      regexp='upload_max_filesize'
+      line='upload_max_filesize = 10000000M'
+
 
 ## SOLR and plugins would be configured here if applicable
